@@ -26,7 +26,8 @@ func Prepare() func() {
 
 	depManager.Provide(func(config *config.ConfigModule) (*mongodb.MongodbModule, error) {
 		module := mongodb.MongodbModule{}
-		module.Service = &mongodb.MongodbService{}
+		service := &mongodb.MongodbService{}
+		module.Service = service
 		module.Service.Init(config.Service.Config.Database.MongoURI, config.Service.Config.Database.MongoDbName)
 		return &module, nil
 	})
@@ -56,7 +57,7 @@ func Prepare() func() {
 	shutdownHook := func() {
 		fmt.Println("Closing database...")
 		err := depManager.Invoke(func(database *mongodb.MongodbModule) error {
-			err := database.Service.Client.Disconnect(context.Background())
+			err := database.Service.GetClient().Disconnect(context.Background())
 			return err
 		})
 		if err == nil {

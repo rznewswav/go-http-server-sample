@@ -18,7 +18,7 @@ type IAuthService interface {
 }
 
 type AuthService struct {
-	Database  *database.MongodbService
+	Database  database.IMongodbService
 	JWTSecret string
 }
 

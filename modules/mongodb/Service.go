@@ -7,9 +7,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type IMongodbService interface {
+	Init(databaseUri string, databaseName string)
+	WithCollection(collection string) IMongodbCollection
+	GetClient() *mongo.Client
+	DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (any, error)
+}
+
 type MongodbService struct {
 	Client       *mongo.Client
 	databaseName string
+}
+
+type IMongodbCollection interface {
+	FindOne(ctx context.Context, filter interface{},
+		opts ...*options.FindOneOptions) *mongo.SingleResult
+	UpdateOne(ctx context.Context, filter interface{}, update interface{},
+		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 }
 
 func (service *MongodbService) Init(databaseUri string, databaseName string) {
@@ -23,7 +37,17 @@ func (service *MongodbService) Init(databaseUri string, databaseName string) {
 	service.Client = client
 }
 
-func (service *MongodbService) WithCollection(collection string) *mongo.Collection {
+func (service *MongodbService) WithCollection(collection string) IMongodbCollection {
 	collectionHandler := service.Client.Database(service.databaseName).Collection(collection)
 	return collectionHandler
+}
+
+func (service *MongodbService) GetClient() *mongo.Client {
+	return service.Client
+}
+
+func (service *MongodbService) DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (any, error) {
+	var mutable any
+	err := singleResult.Decode(&mutable)
+	return mutable, err
 }
