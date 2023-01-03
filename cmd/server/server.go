@@ -16,7 +16,7 @@ import (
 var depManager = dig.New()
 var router = gin.Default()
 
-func Prepare() *func() {
+func Prepare() func() {
 	depManager.Provide(func() (*config.ConfigModule, error) {
 		module := config.ConfigModule{}
 		module.Service = &config.ConfigService{}
@@ -34,10 +34,12 @@ func Prepare() *func() {
 	depManager.Provide(func(config *config.ConfigModule, database *mongodb.MongodbModule) (*auth.AuthModule, error) {
 		module := auth.AuthModule{}
 		module.Controller = &auth.AuthController{}
-		module.Service = &auth.AuthService{}
+		service := &auth.AuthService{}
+		service.Database = database.Service
+		service.JWTSecret = config.Service.Config.Auth.JwtSecret
+
+		module.Service = service
 		module.Controller.Service = module.Service
-		module.Service.Database = database.Service
-		module.Service.JWTSecret = config.Service.Config.Auth.JwtSecret
 
 		return &module, nil
 	})
@@ -64,7 +66,7 @@ func Prepare() *func() {
 		}
 		fmt.Println("Server is closed.")
 	}
-	return &shutdownHook
+	return shutdownHook
 }
 
 func Start() {
