@@ -112,6 +112,7 @@ func PrepareMockService(popNexts ...popNextInstructionObject) IMongodbService {
 	return &service
 }
 
-func (service *MongodbServiceMock) DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (any, error) {
-	return service.popNext("Decode"), nil
+func (service *MongodbServiceMock) DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (interface{}, error) {
+	value := service.popNext("Decode")
+	return value, nil
 }

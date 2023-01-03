@@ -23,14 +23,17 @@ type AuthService struct {
 }
 
 func (service *AuthService) ValidateLogin(email, password string) *JWTPayload {
-	var user SchemaUser
-	collection := service.Database.WithCollection(user.SchemaName())
-	err := collection.FindOne(
+	var userTmp SchemaUser
+	collection := service.Database.WithCollection(userTmp.SchemaName())
+	result := collection.FindOne(
 		context.Background(),
 		bson.M{
 			"contactInfo.email": email,
 		},
-	).Decode(&user)
+	)
+
+	userDecoded, err := service.Database.DecodeSingleResult(result, &userTmp)
+	user := *(userDecoded).(*SchemaUser)
 
 	if err != nil {
 		return nil

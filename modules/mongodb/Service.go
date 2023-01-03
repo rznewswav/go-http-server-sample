@@ -11,7 +11,7 @@ type IMongodbService interface {
 	Init(databaseUri string, databaseName string)
 	WithCollection(collection string) IMongodbCollection
 	GetClient() *mongo.Client
-	DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (any, error)
+	DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (interface{}, error)
 }
 
 type MongodbService struct {
@@ -46,8 +46,7 @@ func (service *MongodbService) GetClient() *mongo.Client {
 	return service.Client
 }
 
-func (service *MongodbService) DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (any, error) {
-	var mutable any
-	err := singleResult.Decode(&mutable)
-	return mutable, err
+func (service *MongodbService) DecodeSingleResult(singleResult *mongo.SingleResult, object interface{}) (interface{}, error) {
+	err := singleResult.Decode(object)
+	return object, err
 }
