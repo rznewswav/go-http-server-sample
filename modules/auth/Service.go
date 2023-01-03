@@ -11,6 +11,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type IAuthService interface {
+	ValidateLogin(email, password string) *JWTPayload
+	ValidateToken(jwtToken string) (bool, error)
+	SignJWT(payload JWTPayload) (string, error)
+}
+
 type AuthService struct {
 	Database  *database.MongodbService
 	JWTSecret string

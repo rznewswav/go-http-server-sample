@@ -10,7 +10,7 @@ import (
 )
 
 type AuthController struct {
-	Service *AuthService
+	Service IAuthService
 }
 
 func (controller *AuthController) GetAuthenticateToken(c *gin.Context) {
