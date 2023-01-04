@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TestLogin(t *testing.T) {
+func TestItShouldBeAbleToCreateJWTClaim(t *testing.T) {
 	var hashedPassword string
 	password := "abcdef"
 	if hashedP, err := bcrypt.GenerateFromPassword([]byte(password), 10); err != nil {
@@ -39,6 +39,6 @@ func TestLogin(t *testing.T) {
 	payload := service.ValidateLogin("Email", password)
 
 	if payload == nil {
-		t.Fail()
+		t.Fatalf("Requested a JWT claim from service.ValidateLogin but returned nil instead!")
 	}
 }
