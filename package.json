@@ -1,0 +1,24 @@
+{
+  "name": "go-dep-injection",
+  "version": "1.0.0",
+  "description": "Running command",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rznewswav/go-http-server-sample.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rznewswav/go-http-server-sample/issues"
+  },
+  "homepage": "https://github.com/rznewswav/go-http-server-sample#readme",
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "tree-kill": "^1.2.2"
+  }
+}
