@@ -33,13 +33,16 @@ func Prepare() func() {
 	})
 
 	depManager.Provide(func(config *config.ConfigModule, database *mongodb.MongodbModule) (*auth.AuthModule, error) {
-		module := auth.AuthModule{}
-		module.Controller = &auth.AuthController{}
+		userRepo := auth.UserRepository{}
+		userRepo.Database = database.Service
 		service := &auth.AuthService{}
-		service.Database = database.Service
+		service.UserRepo = &userRepo
 		service.JWTSecret = config.Service.Config.Auth.JwtSecret
 
+		module := auth.AuthModule{}
 		module.Service = service
+		module.UserRepository = &userRepo
+		module.Controller = &auth.AuthController{}
 		module.Controller.Service = module.Service
 
 		return &module, nil

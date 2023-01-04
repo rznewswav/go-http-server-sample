@@ -1,5 +1,5 @@
 package mongodb
 
 type MongodbModule struct {
-	Service IMongodbService
+	Service *MongodbService
 }

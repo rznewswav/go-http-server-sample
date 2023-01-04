@@ -1,13 +1,10 @@
 package auth
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	database "newswav/http-server-sample/modules/mongodb"
 
 	"github.com/golang-jwt/jwt/v4"
-	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,22 +15,12 @@ type IAuthService interface {
 }
 
 type AuthService struct {
-	Database  database.IMongodbService
+	UserRepo  IUserRepository
 	JWTSecret string
 }
 
 func (service *AuthService) ValidateLogin(email, password string) *JWTPayload {
-	var userTmp SchemaUser
-	collection := service.Database.WithCollection(userTmp.SchemaName())
-	result := collection.FindOne(
-		context.Background(),
-		bson.M{
-			"contactInfo.email": email,
-		},
-	)
-
-	userDecoded, err := service.Database.DecodeSingleResult(result, &userTmp)
-	user := *(userDecoded).(*SchemaUser)
+	user, err := service.UserRepo.GetUserByEmail(email)
 
 	if err != nil {
 		return nil
