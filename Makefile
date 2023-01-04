@@ -1,5 +1,6 @@
 GO ?= go
 TESTFOLDER = $(shell find * -maxdepth 10 -type d | grep /tests | xargs -I {} echo "newswav/http-server-sample/{}")
+SOURCE_FILES = $(shell find * -maxdepth 10 | grep .go$)
 
 
 test:
@@ -22,3 +23,10 @@ test:
 			rm profile.out; \
 		fi; \
 	done
+
+setup:
+	npm init -y && npm install chokidar tree-kill
+
+dev:
+	echo $(SOURCE_FILES) | node watch.cjs go run cmd/main/main.go                                                          
+
